@@ -35,7 +35,7 @@ def save_features(model, data_loader, featurefile):
 
 # evaluate using features
 def feature_evaluation(cl_data_file, model, n_way = 5, n_support = 5, n_query = 15):
-  class_list = cl_data_file.keys()
+  class_list = list(cl_data_file.keys())
   select_class = random.sample(class_list,n_way)
   z_all  = []
   for cl in select_class:

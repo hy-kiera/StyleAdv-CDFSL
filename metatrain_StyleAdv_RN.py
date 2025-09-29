@@ -2,7 +2,8 @@ import numpy as np
 import torch
 import torch.optim
 import os
-import random 
+import random
+import wandb
 
 from methods.backbone_multiblock import model_dict
 from data.datamgr import SimpleDataManager, SetDataManager
@@ -83,8 +84,13 @@ def record_test_result_bscdfsl(params):
 
 # --- main function ---
 if __name__=='__main__':
+  # parser argument
+  params = parse_args('train')
+
+  wandb.init(project="styleadv_reproduce", group="metatrain", config=vars(params), tags=["RNN"])
+
   #fix seed 
-  seed = 0
+  seed = params.seed
   print("set seed = %d" % seed)
   random.seed(seed)
   np.random.seed(seed)
@@ -92,9 +98,6 @@ if __name__=='__main__':
   torch.cuda.manual_seed_all(seed)
   torch.backends.cudnn.deterministic = True
   torch.backends.cudnn.benchmark = False 
-
-  # parser argument
-  params = parse_args('train')
 
   # output and tensorboard dir
   params.tf_dir = '%s/log/%s'%(params.save_dir, params.name)
@@ -105,8 +108,10 @@ if __name__=='__main__':
   # dataloader
   print('\n--- prepare dataloader ---')
   print('  train with single seen domain {}'.format(params.dataset))
-  base_file  = os.path.join(params.data_dir, params.dataset, 'base.json')
-  val_file   = os.path.join(params.data_dir, params.dataset, 'val.json')
+  # base_file  = os.path.join(params.data_dir, params.dataset, 'base.json')
+  # val_file   = os.path.join(params.data_dir, params.dataset, 'val.json')
+  base_file = "/workspaces/StyleAdv-CDFSL/filelists/miniImagenet/base.json"
+  val_file = "/workspaces/StyleAdv-CDFSL/filelists/miniImagenet/val.json"
 
   # model
   print('\n--- build model ---')
@@ -123,7 +128,7 @@ if __name__=='__main__':
   val_datamgr             = SetDataManager(image_size, n_query = n_query, **test_few_shot_params)
   val_loader              = val_datamgr.get_data_loader( val_file, aug = False)
 
-  model           = StyleAdvGNN( model_dict[params.model], tf_path=params.tf_dir, **train_few_shot_params)
+  model           = StyleAdvGNN(model_dict[params.model], tf_path=params.tf_dir, **train_few_shot_params)
   model = model.cuda()
 
   # load model
@@ -143,11 +148,11 @@ if __name__=='__main__':
     model.feature.load_state_dict(state, strict=False)
 
   import time
-  start =time.clock()
+  start =time.time()
   # training
   print('\n--- start the training ---')
   model = train(base_loader, val_loader, model, start_epoch, stop_epoch, params)
-  end=time.clock()
+  end=time.time()
   print('Running time: %s Seconds: %s Min: %s Min per epoch'%(end-start, (end-start)/60, (end-start)/60/params.stop_epoch))
 
   # testing

@@ -1,0 +1,9 @@
+__pycache__/
+*.png
+*.jpg
+*.jpeg
+*.csv
+filelists/
+wandb/
+output/
+*.zip

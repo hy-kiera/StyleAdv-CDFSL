@@ -34,7 +34,7 @@ def save_features(model, data_loader, featurefile):
 
 # evaluate using features
 def feature_evaluation(cl_data_file, model, n_way = 5, n_support = 5, n_query = 15):
-  class_list = cl_data_file.keys()
+  class_list = list(cl_data_file.keys())
   select_class = random.sample(class_list,n_way)
   z_all  = []
   for cl in select_class:
@@ -68,7 +68,8 @@ def test_bestmodel(acc_file, name, dataset,n_shot, save_epoch=-1):
   print('  build dataset')
   image_size = 224
   split = params.split
-  loadfile = os.path.join(params.data_dir, params.dataset, split + '.json')
+  # loadfile = os.path.join(params.data_dir, params.dataset, split + '.json')
+  loadfile = "/workspaces/StyleAdv-CDFSL/filelists/miniImagenet/novel.json"
   print('load file:', loadfile)
   datamgr         = SimpleDataManager(image_size, batch_size = 64)
   data_loader      = datamgr.get_data_loader(loadfile, aug = False)

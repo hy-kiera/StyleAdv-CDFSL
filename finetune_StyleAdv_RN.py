@@ -65,7 +65,10 @@ def finetune(novel_loader, n_pseudo=75, n_way=5, n_support=5):
     print('Test Acc = %4.2f +- %4.2f%%'%(acc_mean, 1.96*acc_std/np.sqrt(iter_num)))
 
 if __name__=='__main__':
-    seed = 0
+    params = parse_args('train')
+    wandb.init(project="styleadv_reproduce", group="finetune", config=vars(params), tags=["RNN"])
+
+    seed = params.seed
     print("set seed = %d" % seed)
     random.seed(seed)
     np.random.seed(seed)
@@ -74,7 +77,6 @@ if __name__=='__main__':
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
-    params = parse_args('train')
 
     image_size = 224
     iter_num = 1000
@@ -106,8 +108,8 @@ if __name__=='__main__':
         novel_loader     = datamgr.get_data_loader(aug = False )
 
     import time
-    start = time.clock()
+    start = time.time()
     finetune(novel_loader, n_pseudo=n_pseudo, n_way=params.test_n_way, n_support=params.n_shot)
-    end = time.clock()
+    end = time.time()
     print('Running time: %s Seconds: %s Min: %s Min per epoch'%(end-start, (end-start)/60, (end-start)/60/iter_num))
     

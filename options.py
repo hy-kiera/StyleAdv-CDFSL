@@ -19,6 +19,8 @@ def parse_args(script):
   #parser.add_argument('--data_dir'    , default='./filelists', type=str, help='')
   parser.add_argument('--data_dir'    , default='/share/test/lovelyqian/CROSS-DOMAIN-FSL-DATASETS', type=str, help='')
 
+  parser.add_argument("--seed", type=int)
+
   # for finetuning
   parser.add_argument('--finetune_epoch', default=50, type=int, help='')
   parser.add_argument('--resume_dir', default='Pretrain', type=str, help='continue from previous trained model with largest epoch')

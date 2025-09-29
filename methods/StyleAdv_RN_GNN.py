@@ -60,7 +60,6 @@ class StyleAdvGNN(MetaTemplate):
     return scores
 
 
-
   def forward_gnn(self, zs):
     # gnn inp: n_q * n_way(n_s + 1) * f
     nodes = torch.cat([torch.cat([z, self.support_label], dim=2) for z in zs], dim=0)
