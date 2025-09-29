@@ -119,7 +119,7 @@ class MetaTemplate(nn.Module):
       scores_fsl_ori, loss_fsl_ori, scores_cls_ori, loss_cls_ori, scores_fsl_adv, loss_fsl_adv, scores_cls_adv, loss_cls_adv = self.set_forward_loss_StyAdv(x_ori, global_y, epsilon_list)
 
       # update
-      reward = loss_fsl_adv + loss_cls_adv
+      reward = - (loss_fsl_adv + loss_cls_adv)
       policy_loss = - (log_prob * (Variable(reward).expand_as(log_prob)).cuda()).sum() - (0.001*entropy.cuda()).sum()
 
       self.policy_optimizer.zero_grad()
